@@ -71,8 +71,35 @@ namespace telefonlista_prepstmt
         }
         static void ListTable()
         {
-            /* Not yet implemented: använd kod från ditt inlämningsprojekt! 
-             *   Observera att prepared statements inte behövs här. */
+            using (var connection = new MySqlConnection(connString))
+            {
+                string sql = $"SELECT * FROM {table};";
+                Console.WriteLine("Kommando: " + sql);
+                connection.Open();
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int ID = reader.GetInt32(0);
+                            string fornamn = reader.GetString(1);
+                            string efternamn = reader.GetString(2);
+                            string gatuadress = reader.GetString(3);
+                            string telefon = reader.GetString(4);
+                            DateTime fodelsetid = reader.GetDateTime(5);
+                            string fodelsedag = fodelsetid.ToShortDateString();
+                            Console.Write($"{ID,4}  ");
+                            Console.Write($"{fornamn,-8}  ");
+                            Console.Write($"{efternamn,-10}  ");
+                            Console.Write($"{gatuadress,-14}  ");
+                            Console.Write($"{telefon,-14}  ");
+                            Console.WriteLine($"{fodelsedag}");
+                        }
+                    }
+                }
+                connection.Close();
+            }
         }
         static void UpdateColumn(int ID, string column, string newValue)
         {
